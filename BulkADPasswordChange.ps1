@@ -69,7 +69,12 @@ if ((Read-Host).ToLower() -eq "y") {
   $Results | % {
     Set-ADAccountPassword $_.SID -NewPassword (ConvertTo-SecureString -AsPlainText $_.Password -Force)
     if ($ChangePasswordAtLogon) {
+      try {
       Set-ADUser $_.SID -ChangePasswordAtLogon:$true
+      }
+      catch {
+        Write-Host "Could not set ChangePasswordAtLogon for user "${_.SID}"."
+      }
     }
   }
 
